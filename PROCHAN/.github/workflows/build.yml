@@ -1,4 +1,4 @@
-name: Build ProChan Extension
+name: Build Tachiyomi Extension
 
 on:
   push:
@@ -13,23 +13,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    # 1. استنساخ الريبو
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-    - name: Set up JDK 17
+    # 2. إعداد Java (Tachiyomi عادة يستخدم Java 17)
+    - name: Setup Java
       uses: actions/setup-java@v3
       with:
         distribution: temurin
         java-version: 17
 
+    # 3. إعطاء صلاحيات تنفيذ gradlew
     - name: Grant execute permission for gradlew
-      run: chmod +x ./gradlew
+      run: chmod +x gradlew
 
+    # 4. تشغيل Gradle build (assembleDebug)
     - name: Build Debug APK
       run: ./gradlew assembleDebug
 
+    # 5. رفع ملف APK كـ artifact
     - name: Upload APK
       uses: actions/upload-artifact@v3
       with:
-        name: ProChan-APK
-        path: extension/build/outputs/**/*.apk
-
+        name: ProChan-Debug-APK
+        path: app/build/outputs/**/*.apk
